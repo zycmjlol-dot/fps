@@ -1,0 +1,171 @@
+-- W FPS Script for Evade (Mobile Optimized)
+-- Theme: Pink-Purple Gradient & Modern Style
+
+local CoreGui = game:GetService("CoreGui")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local Lighting = game:GetService("Lighting")
+local Workspace = game:GetService("Workspace")
+
+-- ป้องกันรันซ้ำ
+if CoreGui:FindFirstChild("WFPS_Mobile") then
+    CoreGui.WFPS_Mobile:Destroy()
+end
+
+-- สร้าง ScreenGui
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "WFPS_Mobile"
+ScreenGui.Parent = CoreGui
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+-- หน้าต่างหลัก (Main Frame)
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(35, 20, 45) -- ธีมเข้มอมม่วง
+MainFrame.Position = UDim2.new(0.5, -140, 0.4, -135)
+MainFrame.Size = UDim2.new(0, 280, 0, 270)
+MainFrame.Active = true
+MainFrame.Draggable = true -- รองรับการลากบนมือถือ
+
+-- มุมโค้งมน
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(0, 14)
+UICorner.Parent = MainFrame
+
+-- ขอบเรืองแสงสีชมพูอ่อน
+local UIStroke = Instance.new("UIStroke")
+UIStroke.Color = Color3.fromRGB(255, 105, 180)
+UIStroke.Thickness = 2
+UIStroke.Parent = MainFrame
+
+-- แถบหัวข้อ (Header)
+local Header = Instance.new("Frame")
+Header.Name = "Header"
+Header.Parent = MainFrame
+Header.BackgroundColor3 = Color3.fromRGB(50, 25, 65)
+Header.Size = UDim2.new(1, 0, 0, 45)
+
+local HeaderCorner = Instance.new("UICorner")
+HeaderCorner.CornerRadius = UDim.new(0, 14)
+HeaderCorner.Parent = Header
+
+-- ซ่อนมุมล่างของ Header ให้เรียบเนียน
+local FixHeader = Instance.new("Frame")
+FixHeader.Parent = Header
+FixHeader.BackgroundColor3 = Color3.fromRGB(50, 25, 65)
+FixHeader.BorderSizePixel = 0
+FixHeader.Position = UDim2.new(0, 0, 0.7, 0)
+FixHeader.Size = UDim2.new(1, 0, 0.3, 0)
+
+-- ข้อความหัวข้อ
+local Title = Instance.new("TextLabel")
+Title.Parent = Header
+Title.BackgroundTransparency = 1
+Title.Position = UDim2.new(0, 15, 0, 0)
+Title.Size = UDim2.new(1, -30, 1, 0)
+Title.Font = Enum.Font.GothamBold
+Title.Text = "W FPS - Evade"
+Title.TextColor3 = Color3.fromRGB(255, 182, 193)
+Title.TextSize = 16
+Title.TextXAlignment = Enum.TextXAlignment.Left
+
+-- ปุ่มปิด (Close Button)
+local CloseBtn = Instance.new("TextButton")
+CloseBtn.Parent = Header
+CloseBtn.BackgroundTransparency = 1
+CloseBtn.Position = UDim2.new(1, -40, 0, 0)
+CloseBtn.Size = UDim2.new(0, 40, 1, 0)
+CloseBtn.Font = Enum.Font.GothamBold
+CloseBtn.Text = "×"
+CloseBtn.TextColor3 = Color3.fromRGB(255, 105, 180)
+CloseBtn.TextSize = 22
+
+CloseBtn.MouseButton1Click:Connect(function()
+    ScreenGui:Destroy()
+end)
+
+-- ฟังก์ชันสร้างปุ่มเมนู
+local function CreateButton(name, positionY)
+    local btn = Instance.new("TextButton")
+    btn.Parent = MainFrame
+    btn.BackgroundColor3 = Color3.fromRGB(75, 40, 95)
+    btn.Position = UDim2.new(0.1, 0, 0, positionY)
+    btn.Size = UDim2.new(0.8, 0, 0, 45)
+    btn.Font = Enum.Font.GothamSemibold
+    btn.Text = name
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.TextSize = 14
+
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 10)
+    corner.Parent = btn
+
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = Color3.fromRGB(218, 112, 214)
+    stroke.Transparency = 0.5
+    stroke.Parent = btn
+
+    -- ลูกเล่นกดแล้วเปลี่ยนสีนิดหน่อย
+    btn.MouseButton1Down:Connect(function()
+        btn.BackgroundColor3 = Color3.fromRGB(110, 55, 140)
+    end)
+    btn.MouseButton1Up:Connect(function()
+        btn.BackgroundColor3 = Color3.fromRGB(75, 40, 95)
+    end)
+
+    return btn
+end
+
+-- ================= ฟังก์ชันที่ 1: ปรับ FPS 90 =================
+local Btn1 = CreateButton("⚡ ปรับ FPS 90 (ลื่นไหล)", 60)
+Btn1.MouseButton1Click:Connect(function()
+    pcall(function()
+        setfpscap(90)
+    end)
+    Title.Text = "W FPS: บังคับ 90 FPS แล้ว"
+    task.wait(2)
+    Title.Text = "W FPS - Evade"
+end)
+
+-- ================= ฟังก์ชันที่ 2: กราฟฟิกต่ำสุด =================
+local Btn2 = CreateButton("📉 กราฟฟิกต่ำสุด (แก้กระตุก)", 120)
+Btn2.MouseButton1Click:Connect(function()
+    settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+    Lighting.GlobalShadows = false
+    Lighting.Brightness = 2
+    
+    for _, v in ipairs(Workspace:GetDescendants()) do
+        if v:IsA("BasePart") then
+            v.Material = Enum.Material.SmoothPlastic
+            v.Reflectance = 0
+        elseif v:IsA("Decal") or v:IsA("Texture") then
+            v.Transparency = 1
+        end
+    end
+    
+    Title.Text = "W FPS: กราฟฟิกต่ำสุดแล้ว"
+    task.wait(2)
+    Title.Text = "W FPS - Evade"
+end)
+
+-- ================= ฟังก์ชันที่ 3: กราฟฟิกต่ำ V2 (ลบเอฟเฟกต์หนักๆ ออก) =================
+local Btn3 = CreateButton("🧹 กราฟฟิกต่ำ V2 (ลบแลคขั้นสุด)", 180)
+Btn3.MouseButton1Click:Connect(function()
+    pcall(function()
+        Lighting.FogEnd = 999999
+        Lighting.Atmosphere:Destroy()
+    end)
+    
+    for _, v in ipairs(Workspace:GetDescendants()) do
+        if v:IsA("ParticleEmitter") or v:IsA("Trail") or v:IsA("Fire") or v:IsA("Smoke") or v:IsA("Sparkles") then
+            v:Destroy()
+        elseif v:IsA("PostEffect") then
+            v.Enabled = false
+        end
+    end
+    
+    Title.Text = "W FPS: V2 เคลียร์ของหนักเรียบร้อย"
+    task.wait(2)
+    Title.Text = "W FPS - Evade"
+end)
